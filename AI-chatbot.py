@@ -4,7 +4,8 @@ import string
 from functools import lru_cache
 
 # Set OpenAI API key
-openai.api_key = "YOUR_API_KEY"
+openai.api_key = "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
+"
 
 # Initialize chat messages list
 messages = []
