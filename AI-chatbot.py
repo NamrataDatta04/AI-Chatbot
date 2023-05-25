@@ -2,10 +2,9 @@ import openai
 import time
 import string
 from functools import lru_cache
-import os
 
 # Set OpenAI API key
-openai.api_key = "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"
+openai.api_key = "YOUR_API_KEY"
 
 # Initialize chat messages list
 messages = []
@@ -70,7 +69,33 @@ while True:
         processed_result = process_data.cache_info()
         if processed_result.hits > 10:
             pass
-
+        
+        # Feedback and learning
+        if user_input != reply:
+            # Prompt the user for feedback
+            feedback = input("Was the assistant's response helpful? [yes/no]: ")
+            
+            # Provide positive or negative feedback
+            if feedback.lower() == "yes":
+                # Positive feedback, reward the model
+                openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "user", "content": user_input},
+                        {"role": "assistant", "content": reply, "role": "system", "content": "reward"}
+                    ]
+                )
+            else:
+                # Negative feedback, train the model on correct response
+                correct_response = input("Please provide the correct response: ")
+                openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "user", "content": user_input},
+                        {"role": "assistant", "content": correct_response}
+                    ]
+                )
+    
     # Ask another question or exit
     print("Press Enter to ask a new question or type 'quit()' to exit.")
     user_input = input()
