@@ -37,7 +37,7 @@ def process_data(input_data):
 
 # Function to fetch the latest news from NewsAPI
 def fetch_latest_information():
-    news_data = newsapi.get_everything(q="bitcoin", sources="bbc-news,the-verge", domains="bbc.co.uk,techcrunch.com", language="en", sort_by="relevancy", page=2)
+    news_data = newsapi.get_everything(q="jupyter notebook", language="en", sort_by="relevancy", page=2)
 
     articles = news_data.get("articles")
 
