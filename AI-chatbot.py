@@ -1,8 +1,7 @@
 import openai
 import time
 import string
-import requests
-from newsapi import NewsApiClient
+from googlesearch import search
 
 # Set OpenAI API key
 openai.api_key = "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"
@@ -16,12 +15,6 @@ messages.append({"role": "system", "content": system_msg})
 
 print("Your new assistant is ready!")
 
-# Get NewsAPI API key
-newsapi = NewsApiClient(api_key="e74d9b9325294830b0c64dd4b2dad4fa")
-
-# List to store response times for monitoring
-response_times = []
-
 # Function to process user input data
 def process_data(input_data):
     # Convert input to lowercase
@@ -30,22 +23,13 @@ def process_data(input_data):
     # Remove punctuation
     processed_data = processed_data.translate(str.maketrans("", "", string.punctuation))
     
-    # Tokenize the input
-    tokens = processed_data.split()
-   
     return processed_data
 
-# Function to fetch the latest news from NewsAPI
-def fetch_latest_information():
-    news_data = newsapi.get_everything(q="jupyter notebook", language="en", sort_by="relevancy", page=2)
-
-    articles = news_data.get("articles")
-
-    if articles:
-        latest_article = articles[0]
-        latest_information = latest_article.get("title")
-        return latest_information
-
+# Function to search Google
+def google_search(query):
+    results = search(query, num_results=1)
+    if results:
+        return results[0]
     return None
 
 # Main chat loop
@@ -61,14 +45,6 @@ while True:
         # Append user message to messages list
         messages.append({"role": "user", "content": user_input})
 
-        start_time = time.time()  # Start measuring response time
-
-        # Fetch the latest information
-        latest_information = fetch_latest_information()
-
-        if latest_information:
-            messages.append({"role": "system", "content": latest_information})
-
         # Get response from OpenAI Chat API
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -77,12 +53,7 @@ while True:
             max_tokens=100,  # Controls the length of the output
             n=1,  # Generate a single response
             stop=None,  # Stop generating after reaching a specific token (optional)
-            
         )
-
-        end_time = time.time()  # Stop measuring response time
-        response_time = end_time - start_time  # Calculate response time
-        response_times.append(response_time)  # Store response time for monitoring
 
         # Get reply from the response
         reply = response.choices[0].message.content
@@ -92,33 +63,15 @@ while True:
         # Process user input
         processed_input = process_data(user_input)
 
-        # Feedback and learning
+        # Search Google if the response is not helpful
         if user_input != reply:
-            # Prompt the user for feedback
-            feedback = input("Was the assistant's response helpful? [yes/no]: ")
+            search_result = google_search(processed_input)
+            if search_result:
+                messages.append({"role": "system", "content": search_result})
+                reply = search_result
 
-            # Provide positive or negative feedback
-            if feedback.lower() == "yes":
-                # Positive feedback, reward the model
-                openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "user", "content": user_input},
-                        {"role": "assistant", "content": reply, "role": "system", "content": "reward"}
-                    ]
-                )
-            else:
-                # Negative feedback, train the model on correct response
-                correct_response = input("Please provide the correct response: ")
-                messages.append({"role": "user", "content": user_input})
-                messages.append({"role": "assistant", "content": correct_response})
-                # Save conversation history to a file
-                with open("conversation_history.txt", "a") as f:
-                    for message in messages:
-                        f.write(f"{message['role']}: {message['content']}\n")
-                # Reset chat messages
-                messages = []
-                messages.append({"role": "system", "content": system_msg})
+        # Append assistant's reply to messages list
+        messages.append({"role": "assistant", "content": reply})
 
     # Ask another question or exit
     print("Press Enter to ask a new question or type 'quit()' to exit.")
