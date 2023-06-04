@@ -1,0 +1,44 @@
+
+
+Importing Libraries:
+   - The code imports the necessary libraries for text wrapping, PyTorch, and the Llama model from the Transformers library.
+   - It also imports the HuggingFaceHub and HuggingFaceEmbeddings classes from the langchain library.
+
+`print_response` function:
+   - This function takes a string as input and prints it, wrapping the text to a maximum width of 100 characters.
+
+Device Selection:
+   - The code checks if a CUDA-enabled GPU is available and sets the device to "cuda" if true, otherwise it uses the CPU.
+
+Special Token IDs:
+   - The code defines the special token IDs for the beginning of sentence (BOS) and end of sentence (EOS) tokens.
+
+Maximum Tokens:
+   - The code sets the maximum number of tokens for generation.
+
+Model Initialization:
+   - The code initializes the Llama model by loading the pre-trained weights from the specified `MODEL_NAME`.
+   - The model is loaded onto the selected device (CPU or GPU).
+
+Tokenizer Initialization:
+   - The code initializes the Llama tokenizer by loading the pre-trained tokenizer from the specified `MODEL_NAME`.
+   - It adds the end of sentence (EOS) token to the tokenizer and sets the BOS token ID.
+
+HuggingFaceHub and HuggingFaceEmbeddings Initialization:
+   - The code initializes the HuggingFaceHub instance, which serves as a hub for accessing pre-trained models and embeddings.
+   - It also initializes the HuggingFaceEmbeddings instance with the specified Hugging Face model name ("openllama").
+
+`generate_response` function:
+   - This function takes a query as input and generates a response using the Llama model.
+   - It encodes the input query using the tokenizer and moves the resulting input IDs to the selected device.
+   - The language of the input query is predicted using the HuggingFaceEmbeddings class.
+   - The model is then used to generate a response based on the input IDs.
+   - The generated response is decoded into text using the tokenizer, skipping special tokens and cleaning up tokenization spaces.
+   - The response is returned as a string.
+
+Main Chat Loop:
+    - The code enters a while loop to interact with the user.
+    - It prompts the user for input and checks if the input is "quit" or "exit" to break the loop.
+    - Otherwise, it generates a response using the `generate_response` function and prints it as the ChatBot's response.
+
+The code leverages the Llama model from Transformers, along with the tokenizer, to generate responses based on user input. It also incorporates the HuggingFaceHub and HuggingFaceEmbeddings classes from the langchain library to predict the language of the user input. The overall functionality is to provide a simple chatbot interface where the ChatBot responds to user queries using the Llama model.
