@@ -1,0 +1,43 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf610
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
+
+\f0\fs24 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+1. Package Installation and Setup:\
+   - This section installs necessary packages using `apt-get` and `pip` commands to set up the environment for running the code. It includes installations for software properties, Python software properties, module-init-tools, google-drive-ocamlfuse, and various Python libraries like transformers, sentencepiece, bitsandbytes, peft, accelerate, and datasets.\
+\
+2. Model and Tokenizer Initialization:\
+   - The code initializes the model and tokenizer for the OpenLM research model with the specified `model_id`. It also configures BitsAndBytes quantization using the provided configuration (`bnb_config`) and device mapping.\
+\
+3. Model Preparation for k-Bit Training:\
+   - This section enables gradient checkpointing and prepares the model for k-bit training using the `prepare_model_for_kbit_training` function from the `peft` library.\
+\
+4. Trainable Parameter Calculation:\
+   - The code defines a function, `print_trainable_parameters`, that calculates and prints the number of trainable parameters in the model.\
+\
+5. LoRA Model Configuration and Modification:\
+   - Here, the code creates a LoRA (Learned Relevance Allocation) configuration using `LoraConfig` from the `peft` library. It specifies parameters like the number of routes (`r`), alpha value (`lora_alpha`), target modules, dropout rate, bias type, and task type.\
+   - The `get_peft_model` function modifies the model with the LoRA configuration.\
+\
+6. Dataset Loading and Tokenization:\
+   - This section loads the SQuAD v2 dataset using `load_dataset` from the `datasets` library. It then tokenizes the questions using the tokenizer and applies the transformation to the entire dataset.\
+\
+7. Hugging Face Hub Token Saving:\
+   - The code installs the `huggingface_hub` library and saves the authentication token using `HfFolder.save_token`. This step is required for interacting with the Hugging Face Hub.\
+\
+8. Trainer Setup and Training:\
+   - The code sets up the trainer using the `Trainer` class from the `transformers` library. It specifies the model, training dataset, training arguments, data collator, and output directory.\
+   - The trainer is then used to train the model using the `train` method.\
+\
+9. Model Saving and LoRA Model Loading:\
+   - This section saves the trained model using `save_pretrained`. It also loads the saved LoRA configuration using `LoraConfig.from_pretrained` and modifies the model accordingly.\
+\
+10. Inference:\
+   - The code prompts the user to ask a question and performs inference using the trained model. It tokenizes the question, generates an answer using the model's `generate` method, and decodes the output to obtain the answer.\
+\
+}
